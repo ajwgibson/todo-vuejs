@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+
+  todo-api:
+    build:
+      context: .
+      dockerfile: todo-api.dockerfile
+    volumes:
+      - ./todo-api:/usr/src/app
+    ports:
+      - "3000:3000"
+    links:
+      - database:database
+
+  todo-app:
+    build:
+      context: .
+      dockerfile: todo-app.dockerfile
+    volumes:
+      - ./todo-app:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "8080:8080"
+    links:
+      - todo-api:todo-api
+
+  database:
+    build:
+      context: .
+      dockerfile: todo-db.dockerfile
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./todo-db-data:/var/lib/postgresql/data
